@@ -194,7 +194,7 @@ Print
 -- Order the result by the product name.
 
 SELECT  vP.ProductName, 
-        FORMAT(vP.unitPrice, 'C', 'en-US') AS 'US FORMAT'
+        FORMAT(vP.unitPrice, 'C', 'en-US') AS 'UnitPrice'
 FROM vProducts as vP
 ORDER BY vP.ProductName;
 go
@@ -206,13 +206,12 @@ go
 
 SELECT  vC.CategoryName,
         vP.ProductName, 
-        FORMAT(vP.unitPrice, 'C', 'en-US') AS 'US FORMAT'
+        FORMAT(vP.unitPrice, 'C', 'en-US') AS 'UnitPrice'
 FROM vProducts as vP
 INNER JOIN vCategories as vC 
     ON vP.CategoryID = vC.CategoryID
 ORDER BY vC.CategoryName, vP.ProductName;
 go
-
 
 -- Question 3 (10% of pts): 
 -- Use functions to show a list of Product names, each Inventory Date, and the Inventory Count.
@@ -220,8 +219,8 @@ go
 -- Order the results by the Product and Date.
 
 SELECT  vP.ProductName,
-        FORMAT(vI.InventoryDate, 'MMMM, yyyy') AS [Inventory Date], 		---Function FORMAT (string)
-        vI.Count
+        FORMAT(vI.InventoryDate, 'MMMM, yyyy') AS [InventoryDate], 		---Function FORMAT (string)
+        vI.Count as [InventoryCount]
 FROM vProducts as vP 
 INNER JOIN vInventories as vI 
     ON vP.ProductID = vI.ProductID
@@ -319,7 +318,7 @@ SELECT TOP 1000000
         ELSE NULL
     END AS CountVsPreviousCountKPI
 FROM vProductInventoriesWithPreviouMonthCounts AS vPMC
-ORDER BY vPMC.ProductName, CAST('01 ' + vPMC.InventoryDate AS DATE);
+--ORDER BY vPMC.ProductName, CAST('01 ' + vPMC.InventoryDate AS DATE);
 GO
 
 -- Test it
@@ -353,18 +352,13 @@ RETURN
 			vKPI.CountVsPreviousCountKPI 
 	FROM vProductInventoriesWithPreviousMonthCountsWithKPIs AS vKPI
 	WHERE vKPI.CountVsPreviousCountKPI = @KPI
-	ORDER BY vkPI.ProductName, CAST( '01 ' + vKPI.InventoryDate AS DATE)
+	--ORDER BY vkPI.ProductName, CAST( '01 ' + vKPI.InventoryDate AS DATE)
 );
 go
+--Check that it works:
 Select * From fProductInventoriesWithPreviousMonthCountsWithKPIs(1);
 Select * From fProductInventoriesWithPreviousMonthCountsWithKPIs(0);
 Select * From fProductInventoriesWithPreviousMonthCountsWithKPIs(-1);
 GO
-/* Check that it works:
-Select * From fProductInventoriesWithPreviousMonthCountsWithKPIs(1);
-Select * From fProductInventoriesWithPreviousMonthCountsWithKPIs(0);
-Select * From fProductInventoriesWithPreviousMonthCountsWithKPIs(-1);
-*/
-go
 
 /***************************************************************************************/
